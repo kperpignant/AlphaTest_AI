@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ESNext",
+    "lib": ["ES2021", "DOM"],
+    "types": ["node"],
+    "paths": {
+      "*": ["./*"]
+    }
+  },
+  "include": ["./**/*"],
+  "exclude": ["./_generated"]
+}
