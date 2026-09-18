@@ -75,14 +75,16 @@ Sign in with Clerk, then open **Settings** to paste your OpenRouter key (and opt
 ## Deploy (Vercel + Convex)
 
 1. Import the GitHub repo into Vercel.
-2. Set Vercel env vars:
-   - `VITE_CLERK_PUBLISHABLE_KEY`
-   - `CONVEX_DEPLOY_KEY` (from the Convex dashboard)
-3. Build uses Convex deploy + Vite:
+2. Set Vercel env vars (**Production** + **Preview**), then **redeploy** (Vite bakes these in at build time):
+   - `VITE_CLERK_PUBLISHABLE_KEY` — Clerk publishable key (`pk_…`). Do **not** use `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`.
+   - `CONVEX_DEPLOY_KEY` — from the Convex dashboard (lets the Vercel build run `convex deploy` and inject `VITE_CONVEX_URL`).
+3. `vercel.json` build command:
 
 ```text
 npx convex deploy --cmd "npm run build" --cmd-url-env-var-name VITE_CONVEX_URL
 ```
+
+If the site is blank, open the browser console: missing `VITE_CONVEX_URL` or `VITE_CLERK_PUBLISHABLE_KEY` at build time throws before React mounts.
 
 Local production-style build:
 
