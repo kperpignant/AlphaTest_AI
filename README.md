@@ -123,7 +123,6 @@ npx convex env set OPENROUTER_MODEL openai/gpt-4o-mini
 - Keys are visible to Convex deployment admins (hackathon BYOK tradeoff). Prefer revocable keys.
 
 ---
-
 ## License / provenance
 
 Domain inspired by [kperpignant/AlphaTest](https://github.com/kperpignant/AlphaTest). Stack patterns adapted from [kperpignant/NIDORA](https://github.com/kperpignant/NIDORA).
