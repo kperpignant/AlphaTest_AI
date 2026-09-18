@@ -15,7 +15,9 @@ if (!convexUrl) {
   throw new Error("Missing VITE_CONVEX_URL");
 }
 if (!clerkPubKey) {
-  throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY");
+  throw new Error(
+    "Missing VITE_CLERK_PUBLISHABLE_KEY (use the Vite env name, not NEXT_PUBLIC_…)",
+  );
 }
 
 const convex = new ConvexReactClient(convexUrl);
