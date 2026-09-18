@@ -74,32 +74,61 @@ Sign in with Clerk, then open **Settings** to paste your OpenRouter key (and opt
 
 ## Deploy (Vercel + Convex)
 
-1. Import the GitHub repo into Vercel.
-2. Set Vercel env vars (**Production** + **Preview**), then **redeploy** (Vite bakes these in at build time):
-   - `VITE_CLERK_PUBLISHABLE_KEY` — Clerk publishable key (`pk_…`). Do **not** use `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`.
-   - `CONVEX_DEPLOY_KEY` — from the Convex dashboard (lets the Vercel build run `convex deploy` and inject `VITE_CONVEX_URL`).
-3. `vercel.json` build command:
+Vite embeds `VITE_*` vars **at build time**. A blank production page almost always means one of them was missing during the Vercel build.
+
+### 1. Vercel environment variables
+
+In the Vercel project → **Settings → Environment Variables**, set for **Production** (and Preview if you use it):
+
+| Name | Value |
+| --- | --- |
+| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key (`pk_…`). **Not** `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`. |
+| `VITE_CONVEX_URL` | Your Convex deployment URL (e.g. `https://….convex.cloud` from the Convex dashboard / `.env.local`). |
+
+Then **redeploy** so the new build picks them up.
+
+### 2. Build command
+
+`vercel.json` uses a plain Vite build (no Convex CLI during Vercel CI):
+
+```text
+npm run build
+```
+
+Push Convex functions separately from your machine (or CI with a deploy key):
+
+```bash
+npx convex deploy
+```
+
+Optional: to have Vercel run Convex deploy and inject `VITE_CONVEX_URL` automatically, set `CONVEX_DEPLOY_KEY` on Vercel and change the build command to:
 
 ```text
 npx convex deploy --cmd "npm run build" --cmd-url-env-var-name VITE_CONVEX_URL
 ```
 
-If the site is blank, open the browser console: missing `VITE_CONVEX_URL` or `VITE_CLERK_PUBLISHABLE_KEY` at build time throws before React mounts.
+Without `CONVEX_DEPLOY_KEY`, that command fails with `MissingAccessToken`.
 
-Local production-style build:
+### 3. Convex auth for production
+
+On the Convex deployment that `VITE_CONVEX_URL` points at:
 
 ```bash
-npm run deploy:vercel
+npx convex env set CLERK_JWT_ISSUER_DOMAIN https://your-instance.clerk.accounts.dev
 ```
 
-4. On the Convex **production** deployment, set `CLERK_JWT_ISSUER_DOMAIN`.
-
-Do **not** set a shared `OPENROUTER_API_KEY` for the app — users bring their own keys in Settings.
+Do **not** set a shared `OPENROUTER_API_KEY` — users bring their own keys in Settings.
 
 Optional model override:
 
 ```bash
 npx convex env set OPENROUTER_MODEL openai/gpt-4o-mini
+```
+
+Local production-style build (requires Convex auth locally):
+
+```bash
+npm run deploy:vercel
 ```
 
 ---
